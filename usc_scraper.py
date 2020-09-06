@@ -28,7 +28,7 @@ def parse_amounts(amount):
 
 
 def print_results(total_cost, number_of_checkins, eur_per_checkin):
-  print('Urban Sports Club stats:')
+  print('Urban Sports Club – Euros per check-in:')
   print('Total payment amount (EUR): ', total_cost)
   print('Number of check-ins: ', number_of_checkins)
   print('EUR / check-in: ', eur_per_checkin)
@@ -56,8 +56,7 @@ hidden_key = hidden_input['id']
 hidden_value = hidden_input['value']
 
 # Configure headers and data from hidden keys
-base_data = '&check=&email=' + email + '&password=' + password + '&remember-me=1'
-data = hidden_key + '=' + hidden_value + base_data
+data = f'{hidden_key}={hidden_value}&check=&email={email}&password={password}&remember-me=1'
 post_headers = {
   'content-type': 'application/x-www-form-urlencoded',
   'User-Agent': 'Mozilla/5.0',
