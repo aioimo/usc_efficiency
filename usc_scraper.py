@@ -1,10 +1,11 @@
 import requests
+import os
 from bs4 import BeautifulSoup
-from time import sleep
-from re import sub
 from decimal import Decimal
 from dotenv import load_dotenv
-import os
+from re import sub
+from time import sleep
+
 
 load_dotenv()
 
