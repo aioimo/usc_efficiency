@@ -29,7 +29,7 @@ def parse_amounts(amount):
 
 def print_results(total_cost, number_of_checkins, eur_per_checkin):
   print('Urban Sports Club stats:')
-  print('Total payment amount: ', total_cost)
+  print('Total payment amount (EUR): ', total_cost)
   print('Number of check-ins: ', number_of_checkins)
   print('EUR / check-in: ', eur_per_checkin)
 
