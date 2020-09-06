@@ -19,7 +19,7 @@ PASSWORD=
 ## Sample output
 
 ```
-Urban Sports Club stats:
+Urban Sports Club – Euros per check-in:
 Total payment amount (EUR):  2496.27
 Number of check-ins:  347
 EUR / check-in:  7.193861671469740634005763689
