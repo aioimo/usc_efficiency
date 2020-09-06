@@ -1,5 +1,5 @@
-import requests
 import os
+import requests
 from bs4 import BeautifulSoup
 from decimal import Decimal
 from dotenv import load_dotenv
