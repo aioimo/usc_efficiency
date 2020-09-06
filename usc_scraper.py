@@ -60,7 +60,7 @@ post_headers = {'content-type': 'application/x-www-form-urlencoded', 'User-Agent
 
 # Send login POST request 
 session.post(login_url, data=data, headers=post_headers)
-sleep(2)
+sleep(1)
 
 
 ## Find total number of check-ins
@@ -70,7 +70,7 @@ membership_soup = BeautifulSoup(membership_response.text, 'html.parser')
 check_ins = membership_soup.find('span', class_='smm-checkin-stats__total')
 
 number_of_checkins = Decimal(check_ins.text.strip())
-sleep(2)
+sleep(1)
 
 ## Find total amount paid
 payment_history_response = session.get(base_url + '/profile/payment-history', headers=get_headers)
