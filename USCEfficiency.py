@@ -11,7 +11,7 @@ def parse_row(row):
   return price.text.strip()
 
 
-def parse_amounts(amount):
+def parse_amount(amount):
   return Decimal(sub(r'[^\d.]', '', amount)) / Decimal(100)
 
 
