@@ -6,13 +6,14 @@ from dotenv import load_dotenv
 from re import sub
 from time import sleep
 
-
 load_dotenv()
+
 
 base_url = 'https://www.urbansportsclub.com/en'
 login_url = 'https://urbansportsclub.com/en/login'
 
-def parse_email(email):
+
+def format_email(email):
   return email.replace('@', '%40')
 
 
@@ -33,15 +34,15 @@ def print_results(total_cost, number_of_checkins, eur_per_checkin):
   print('EUR / checkin: ', eur_per_checkin)
 
 
-email = parse_email(os.environ.get('EMAIL'))
+email = format_email(os.environ.get('EMAIL'))
 password = os.environ.get('PASSWORD')
 
 
 ## Start the session
 session = requests.Session()
 
-## Handle login 
 
+## Handle login 
 get_headers = {'User-Agent': 'Mozilla/5.0'}
 login_response = session.get(base_url, headers=get_headers)
 login_soup = BeautifulSoup(login_response.text, 'html.parser')
