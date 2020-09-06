@@ -8,15 +8,15 @@ import os
 
 load_dotenv()
 
-base_url = "https://www.urbansportsclub.com/en"
+base_url = 'https://www.urbansportsclub.com/en'
 login_url = 'https://urbansportsclub.com/en/login'
 
 def parse_email(email):
-  return email.replace("@", "%40")
+  return email.replace('@', '%40')
 
 
 def parse_row(row):
-  columns = row.find_all("div")
+  columns = row.find_all('div')
   price = columns[-1]
   return price.text.strip()
 
@@ -26,10 +26,10 @@ def parse_amounts(amount):
 
 
 def print_results(total_cost, number_of_checkins, eur_per_checkin):
-  print("Urban Sports Club ")
-  print("Total cost: ", total_cost)
-  print("Number of checkins: ", number_of_checkins)
-  print("Average EUR / checkin: ", eur_per_checkin)
+  print('Urban Sports Club ')
+  print('Total cost: ', total_cost)
+  print('Number of checkins: ', number_of_checkins)
+  print('EUR / checkin: ', eur_per_checkin)
 
 
 email = parse_email(os.environ.get('EMAIL'))
@@ -46,16 +46,16 @@ login_response = session.get(base_url, headers=get_headers)
 login_soup = BeautifulSoup(login_response.text, 'html.parser')
 
 # Find DOM element: hidden <input>
-login_form = login_soup.find(id="login-form")
-hidden_input = login_form.find(type="hidden")
+login_form = login_soup.find(id='login-form')
+hidden_input = login_form.find(type='hidden')
 
 # Extract values from hidden input
 hidden_key = hidden_input['id']
 hidden_value = hidden_input['value']
 
 # Configure headers and data from hidden keys
-base_data = "&check=&email=" + email + "&password=" + password + "&remember-me=1"
-data = hidden_key + "=" + hidden_value + base_data
+base_data = '&check=&email=' + email + '&password=' + password + '&remember-me=1'
+data = hidden_key + '=' + hidden_value + base_data
 post_headers = {'content-type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0', 'x-newrelic-id': hidden_key}
 
 # Send login POST request 
@@ -67,7 +67,7 @@ sleep(2)
 membership_response = session.get(base_url + '/profile/membership', headers=get_headers)
 membership_soup = BeautifulSoup(membership_response.text, 'html.parser')
 
-check_ins = membership_soup.find("span", class_="smm-checkin-stats__total")
+check_ins = membership_soup.find('span', class_='smm-checkin-stats__total')
 
 number_of_checkins = Decimal(check_ins.text.strip())
 sleep(2)
@@ -77,8 +77,8 @@ payment_history_response = session.get(base_url + '/profile/payment-history', he
 payment_history_soup = BeautifulSoup(payment_history_response.text, 'html.parser')
 
 # Find DOM elements: table and rows
-table = payment_history_soup.find("div", class_="smm-payment-history__table")
-rows = table.select("div .smm-payment-history__table-row")
+table = payment_history_soup.find('div', class_='smm-payment-history__table')
+rows = table.select('div .smm-payment-history__table-row')
 
 prices_column = map(parse_row, rows)
 list_of_prices = map(parse_amounts, prices_column)
