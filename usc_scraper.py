@@ -28,10 +28,10 @@ def parse_amounts(amount):
 
 
 def print_results(total_cost, number_of_checkins, eur_per_checkin):
-  print('Urban Sports Club ')
-  print('Total cost: ', total_cost)
-  print('Number of checkins: ', number_of_checkins)
-  print('EUR / checkin: ', eur_per_checkin)
+  print('Urban Sports Club stats:')
+  print('Total payment amount: ', total_cost)
+  print('Number of check-ins: ', number_of_checkins)
+  print('EUR / check-in: ', eur_per_checkin)
 
 
 email = format_email(os.environ.get('EMAIL'))
@@ -58,7 +58,11 @@ hidden_value = hidden_input['value']
 # Configure headers and data from hidden keys
 base_data = '&check=&email=' + email + '&password=' + password + '&remember-me=1'
 data = hidden_key + '=' + hidden_value + base_data
-post_headers = {'content-type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0', 'x-newrelic-id': hidden_key}
+post_headers = {
+  'content-type': 'application/x-www-form-urlencoded',
+  'User-Agent': 'Mozilla/5.0',
+  'x-newrelic-id': hidden_key
+}
 
 # Send login POST request 
 session.post(login_url, data=data, headers=post_headers)
@@ -69,6 +73,7 @@ sleep(1)
 membership_response = session.get(base_url + '/profile/membership', headers=get_headers)
 membership_soup = BeautifulSoup(membership_response.text, 'html.parser')
 
+# Find DOM element with value: <span>142</span> Check-ins
 check_ins = membership_soup.find('span', class_='smm-checkin-stats__total')
 
 number_of_checkins = Decimal(check_ins.text.strip())
@@ -79,6 +84,7 @@ payment_history_response = session.get(base_url + '/profile/payment-history', he
 payment_history_soup = BeautifulSoup(payment_history_response.text, 'html.parser')
 
 # Find DOM elements: table and rows
+# Find DOM element with value: <span>60,00€</span>
 table = payment_history_soup.find('div', class_='smm-payment-history__table')
 rows = table.select('div .smm-payment-history__table-row')
 
