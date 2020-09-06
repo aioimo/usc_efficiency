@@ -10,55 +10,10 @@ load_dotenv()
 
 base_url = "https://www.urbansportsclub.com/en"
 login_url = 'https://urbansportsclub.com/en/login'
-headers = {'User-Agent': 'Mozilla/5.0'}
 
 def parse_email(email):
   return email.replace("@", "%40")
 
-email = parse_email(os.environ.get('EMAIL'))
-password = os.environ.get('PASSWORD')
-
-
-
-session = requests.Session()
-
-r = session.get(base_url, headers=headers)
-soup = BeautifulSoup(r.text, 'html.parser')
-
-login_form = soup.find(id="login-form")
-hidden_input = login_form.find(type="hidden")
-
-hidden_id = hidden_input['id']
-hidden_value = hidden_input['value']
-
-base_data = "&check=&email=" + email + "&password=" + password + "&remember-me=1"
-
-data = hidden_id + "=" + hidden_value + base_data
-
-request_headers = {'content-type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0', 'x-newrelic-id': hidden_id}
-
-
-s = session.post(login_url, data=data, headers=request_headers)
-
-sleep(2)
-
-s = session.get(base_url + '/profile/membership', headers=headers)
-soup = BeautifulSoup(s.text, 'html.parser')
-
-# all_stats = soup.find("div", class_="smm-checkin-stats")
-check_ins = soup.find("span", class_="smm-checkin-stats__total")
-
-number_of_total_checkins = Decimal(check_ins.text.strip())
-
-
-sleep(2)
-
-r_2 = session.get(base_url + '/profile/payment-history', headers=headers)
-
-soup_payment_history = BeautifulSoup(r_2.text, 'html.parser')
-
-table = soup_payment_history.find("div", class_="smm-payment-history__table")
-rows = table.select("div .smm-payment-history__table-row")
 
 def parse_row(row):
   columns = row.find_all("div")
@@ -70,14 +25,67 @@ def parse_amounts(amount):
   return Decimal(sub(r'[^\d.]', '', amount)) / Decimal(100)
 
 
+def print_results(total_cost, number_of_checkins, eur_per_checkin):
+  print("Urban Sports Club ")
+  print("Total cost: ", total_cost)
+  print("Number of checkins: ", number_of_checkins)
+  print("Average EUR / checkin: ", eur_per_checkin)
 
-prices_unparsed = map(parse_row, rows)
-prices = map(parse_amounts, prices_unparsed)
-total_cost = sum(prices)
 
-average_cost_per_checkin = total_cost / number_of_total_checkins
+email = parse_email(os.environ.get('EMAIL'))
+password = os.environ.get('PASSWORD')
 
-print("The results are.....")
-print("Total cost: ", total_cost)
-print("Number of checkins: ", number_of_total_checkins)
-print("Average EUR / checkin: ", average_cost_per_checkin)
+
+## Start the session
+session = requests.Session()
+
+## Handle login 
+
+get_headers = {'User-Agent': 'Mozilla/5.0'}
+login_response = session.get(base_url, headers=get_headers)
+login_soup = BeautifulSoup(login_response.text, 'html.parser')
+
+# Find DOM element: hidden <input>
+login_form = login_soup.find(id="login-form")
+hidden_input = login_form.find(type="hidden")
+
+# Extract values from hidden input
+hidden_key = hidden_input['id']
+hidden_value = hidden_input['value']
+
+# Configure headers and data from hidden keys
+base_data = "&check=&email=" + email + "&password=" + password + "&remember-me=1"
+data = hidden_key + "=" + hidden_value + base_data
+post_headers = {'content-type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0', 'x-newrelic-id': hidden_key}
+
+# Send login POST request 
+session.post(login_url, data=data, headers=post_headers)
+sleep(2)
+
+
+## Find total number of check-ins
+membership_response = session.get(base_url + '/profile/membership', headers=get_headers)
+membership_soup = BeautifulSoup(membership_response.text, 'html.parser')
+
+check_ins = membership_soup.find("span", class_="smm-checkin-stats__total")
+
+number_of_checkins = Decimal(check_ins.text.strip())
+sleep(2)
+
+## Find total amount paid
+payment_history_response = session.get(base_url + '/profile/payment-history', headers=get_headers)
+payment_history_soup = BeautifulSoup(payment_history_response.text, 'html.parser')
+
+# Find DOM elements: table and rows
+table = payment_history_soup.find("div", class_="smm-payment-history__table")
+rows = table.select("div .smm-payment-history__table-row")
+
+prices_column = map(parse_row, rows)
+list_of_prices = map(parse_amounts, prices_column)
+
+total_cost = sum(list_of_prices)
+eur_per_checkin = total_cost / number_of_checkins
+
+## Print results
+print_results(total_cost, number_of_checkins, eur_per_checkin)
+
