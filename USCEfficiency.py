@@ -78,7 +78,7 @@ class USCEfficiency:
     rows = table.select('div .smm-payment-history__table-row')
 
     prices_column = map(parse_row, rows)
-    list_of_prices = map(parse_amounts, prices_column)
+    list_of_prices = map(parse_amount, prices_column)
 
     self.total_cost = sum(list_of_prices)
 
