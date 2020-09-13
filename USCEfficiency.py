@@ -3,16 +3,7 @@ from bs4 import BeautifulSoup
 from re import sub
 from time import sleep
 from decimal import Decimal
-
-
-def parse_row(row):
-  columns = row.find_all('div')
-  price = columns[-1]
-  return price.text.strip()
-
-
-def parse_amount(amount):
-  return Decimal(sub(r'[^\d.]', '', amount)) / Decimal(100)
+from Results import Results
 
 
 class USCEfficiency:
@@ -31,6 +22,14 @@ class USCEfficiency:
     self.get_number_of_check_ins()
     self.get_total_amount_paid()
     self.print_results()
+
+  def parse_amount(self, amount):
+    return Decimal(sub(r'[^\d.]', '', amount)) / Decimal(100)
+
+  def parse_row(self, row):
+    columns = row.find_all('div')
+    price = columns[-1]
+    return price.text.strip()
 
 
   def login(self):
@@ -77,18 +76,12 @@ class USCEfficiency:
     table = payment_history_soup.find('div', class_='smm-payment-history__table')
     rows = table.select('div .smm-payment-history__table-row')
 
-    prices_column = map(parse_row, rows)
-    list_of_prices = map(parse_amount, prices_column)
+    prices_column = map(self.parse_row, rows)
+    list_of_prices = map(self.parse_amount, prices_column)
 
     self.total_cost = sum(list_of_prices)
 
 
-  def eur_per_checkin(self):
-    return self.total_cost / self.number_of_checkins
-
-
   def print_results(self):
-    print('Urban Sports Club – Euros per check-in:')
-    print('Total payment amount (EUR): ', self.total_cost)
-    print('Number of check-ins: ', self.number_of_checkins)
-    print('EUR / check-in: ', self.eur_per_checkin())
+    results = Results(self.number_of_checkins, self.total_cost)
+    results.display()
