@@ -15,8 +15,8 @@ password = os.environ.get('PASSWORD')
 
 t1 = time.time()
 if __name__ == '__main__':
-  instance = USCEfficiency(email,password)
-  instance.start()
+  efficiency = USCEfficiency(email,password)
+  efficiency.get()
 
 t2 = time.time()
 

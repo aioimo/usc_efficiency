@@ -17,7 +17,7 @@ class USCEfficiency:
     self.session = requests.Session()
 
 
-  def start(self):
+  def get(self):
     self.login()
     self.get_number_of_check_ins()
     self.get_total_amount_paid()
@@ -53,7 +53,7 @@ class USCEfficiency:
       'x-newrelic-id': hidden_key
     }
     self.session.post(self.login_url, data=data, headers=post_headers)
-    sleep(1)
+    sleep(0.5)
 
 
   def get_number_of_check_ins(self): 
@@ -64,7 +64,7 @@ class USCEfficiency:
     check_ins = membership_soup.find('span', class_='smm-checkin-stats__total')
 
     self.number_of_checkins = Decimal(check_ins.text.strip())
-    sleep(1)
+    sleep(0.5)
 
 
   def get_total_amount_paid(self):

@@ -1,10 +1,11 @@
 import math
 from decimal import Decimal
 
-DEFAULT_PRICE_PER_MONTH = 59.00
+PRICE_PER_MONTH = 59.00
+DIVIDER = '---------------------'
 
 class Results:
-  def __init__(self, number_of_checkins, total_cost, cost_per_month = DEFAULT_PRICE_PER_MONTH):
+  def __init__(self, number_of_checkins, total_cost, cost_per_month = PRICE_PER_MONTH):
     self.number_of_checkins = number_of_checkins
     self.total_cost = total_cost
     self.cost_per_month = Decimal(cost_per_month)
@@ -27,13 +28,13 @@ class Results:
 
   def display(self):
     print('Urban Sports Club – Euros per check-in:')
-    print('---------------------')
+    print(DIVIDER)
     print('Total payment amount (EUR) : ', self.total_cost)
     print('Number of check-ins: ', self.number_of_checkins)
     print('EUR / check-in: ', round(self.eur_per_checkin(), 2))
-    print('---------------------')
+    print(DIVIDER)
     print('To improve this rate:', f"{math.ceil(self.checkins_improval_threshold())} check-ins in the next 30 days")
-    print('---------------------')
+    print(DIVIDER)
     print('In the next 30 days, n checkins will yield the following results:')
     self.print_for_n(2)
     self.print_for_n(3)
@@ -42,6 +43,6 @@ class Results:
     self.print_for_n(10)
     self.print_for_n(15)
     self.print_for_n(30)
-    print('---------------------')
+    print(DIVIDER)
 
 
